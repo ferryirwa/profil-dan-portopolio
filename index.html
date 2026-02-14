@@ -14,6 +14,8 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Lightbox2 for image gallery -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/css/lightbox.min.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #2563eb;
@@ -434,6 +436,7 @@
             height: 100%;
             margin-bottom: 30px;
             position: relative;
+            cursor: pointer;
         }
         
         .project-card:hover {
@@ -491,6 +494,120 @@
         .status-ongoing {
             background: var(--warning-color);
             color: white;
+        }
+        
+        /* Modal Gallery */
+        .modal-gallery {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            overflow: auto;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content-gallery {
+            position: relative;
+            margin: auto;
+            padding: 20px;
+            width: 90%;
+            max-width: 1200px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 10000;
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color);
+            transform: scale(1.1);
+        }
+        
+        .gallery-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            aspect-ratio: 16/9;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 15px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+        
+        /* Lightbox customization */
+        .lb-loader .lb-cancel {
+            border-color: var(--primary-color);
+        }
+        
+        .lb-nav a.lb-prev, .lb-nav a.lb-next {
+            opacity: 1;
+        }
+        
+        .lb-data .lb-close {
+            background-size: cover;
         }
         
         /* Contact Section */
@@ -667,6 +784,10 @@
             .biodata-card, .contact-card {
                 padding: 30px;
             }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
         }
         
         @media (max-width: 576px) {
@@ -676,6 +797,10 @@
             
             .hero-subtitle {
                 font-size: 1.1rem;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -910,9 +1035,9 @@
             </div>
             
             <div class="row">
-                <!-- Project 1 -->
+                <!-- Project 1 - Portfolio Website -->
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000">
-                    <div class="project-card">
+                    <div class="project-card" onclick="openGallery('portfolio')">
                         <div class="project-status status-completed">Completed</div>
                         <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Portfolio Website" class="project-img">
                         <div class="project-content">
@@ -927,15 +1052,15 @@
                             <p class="mb-3">Fully responsive portfolio website with modern design, smooth animations, and interactive elements. Showcases skills, experience, and projects effectively.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">December 2023</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Project 2 -->
+                <!-- Project 2 - Network Monitoring -->
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                    <div class="project-card">
+                    <div class="project-card" onclick="openGallery('network')">
                         <div class="project-status status-completed">Completed</div>
                         <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Network Monitoring Tool" class="project-img">
                         <div class="project-content">
@@ -950,15 +1075,39 @@
                             <p class="mb-3">Monitoring tool to track network performance and detect anomalies. Provides real-time alerts, detailed reports, and performance analytics.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">October 2023</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Project 3 -->
+                <!-- Project 3 - ABSENSI PDAM LOMBOK TIMUR (PROJECT BARU) -->
                 <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
-                    <div class="project-card">
+                    <div class="project-card" onclick="openGallery('pdam')">
+                        <div class="project-status status-completed">Completed</div>
+                        <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Aplikasi Absensi PDAM Lombok Timur" class="project-img">
+                        <div class="project-content">
+                            <h4>Aplikasi Absensi PDAM Lombok Timur</h4>
+                            <div class="project-tags">
+                                <span class="project-tag">PHP</span>
+                                <span class="project-tag">MySQL</span>
+                                <span class="project-tag">Laravel</span>
+                                <span class="project-tag">Bootstrap</span>
+                                <span class="project-tag">Face Recognition</span>
+                                <span class="project-tag">PDAM</span>
+                            </div>
+                            <p class="mb-3">Sistem absensi digital untuk karyawan PDAM Lombok Timur dengan fitur face recognition, GPS tracking, laporan real-time, dan manajemen shift kerja. Digunakan oleh 200+ karyawan.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">January 2024</small>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Project 4 - Inventory Management -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000">
+                    <div class="project-card" onclick="openGallery('inventory')">
                         <div class="project-status status-ongoing">In Progress</div>
                         <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Inventory Management" class="project-img">
                         <div class="project-content">
@@ -972,15 +1121,15 @@
                             <p class="mb-3">Desktop application for small businesses to manage inventory, track sales, generate reports, and handle user authentication with data backup.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">Current Project</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Project 4 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000">
-                    <div class="project-card">
+                <!-- Project 5 - Lombok Tourism -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
+                    <div class="project-card" onclick="openGallery('tourism')">
                         <div class="project-status status-completed">Completed</div>
                         <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Tourism Website" class="project-img">
                         <div class="project-content">
@@ -995,15 +1144,15 @@
                             <p class="mb-3">Tourism website for Lombok featuring destination guides, tour packages, booking system, and multilingual support for international tourists.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">August 2023</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Project 5 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                    <div class="project-card">
+                <!-- Project 6 - IT Support Dashboard -->
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
+                    <div class="project-card" onclick="openGallery('itsupport')">
                         <div class="project-status status-completed">Completed</div>
                         <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="IT Support Dashboard" class="project-img">
                         <div class="project-content">
@@ -1018,29 +1167,7 @@
                             <p class="mb-3">Comprehensive dashboard for IT support teams to track tickets, monitor system health, manage assets, and generate performance reports.</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <small class="text-muted">June 2023</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Project 6 -->
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">
-                    <div class="project-card">
-                        <div class="project-status status-ongoing">In Progress</div>
-                        <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="E-commerce Platform" class="project-img">
-                        <div class="project-content">
-                            <h4>Local E-commerce Platform</h4>
-                            <div class="project-tags">
-                                <span class="project-tag">Full Stack</span>
-                                <span class="project-tag">MERN Stack</span>
-                                <span class="project-tag">Payment Gateway</span>
-                                <span class="project-tag">E-commerce</span>
-                            </div>
-                            <p class="mb-3">Complete e-commerce platform for local businesses featuring product management, shopping cart, user authentication, and payment integration.</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">Current Project</small>
-                                <a href="#" class="text-primary text-decoration-none fw-bold">View Details →</a>
+                                <span class="text-primary text-decoration-none fw-bold" style="cursor: pointer;">Click to see photos →</span>
                             </div>
                         </div>
                     </div>
@@ -1048,6 +1175,17 @@
             </div>
         </div>
     </section>
+
+    <!-- Modal Gallery for Project Photos -->
+    <div id="galleryModal" class="modal-gallery">
+        <span class="close-modal" onclick="closeGallery()">&times;</span>
+        <div class="modal-content-gallery">
+            <h2 class="gallery-title" id="galleryTitle">Project Gallery</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- Gallery images will be loaded here dynamically -->
+            </div>
+        </div>
+    </div>
 
     <!-- Contact Section -->
     <section id="contact" class="contact-section">
@@ -1158,6 +1296,7 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
     <script>
         // Initialize AOS
         AOS.init({
@@ -1258,17 +1397,169 @@
                     }
                 });
             });
+        });
+        
+        // Gallery functionality
+        function openGallery(projectId) {
+            const modal = document.getElementById('galleryModal');
+            const galleryGrid = document.getElementById('galleryGrid');
+            const galleryTitle = document.getElementById('galleryTitle');
             
-            // Add animation to project cards on hover
-            document.querySelectorAll('.project-card').forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-15px) scale(1.02)';
-                });
+            // Clear previous images
+            galleryGrid.innerHTML = '';
+            
+            // Set title based on project
+            if (projectId === 'pdam') {
+                galleryTitle.textContent = 'Aplikasi Absensi PDAM Lombok Timur - Gallery';
                 
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
+                // Add images for PDAM project
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Dashboard Admin' },
+                    { url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Halaman Absensi dengan Face Recognition' },
+                    { url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Laporan Real-time' },
+                    { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Manajemen Shift Karyawan' },
+                    { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Tracking Lokasi Karyawan' },
+                    { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Integrasi dengan Server PDAM' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="pdam-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
                 });
-            });
+            } else if (projectId === 'portfolio') {
+                galleryTitle.textContent = 'Professional Portfolio Website - Gallery';
+                
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1551650975-87deedd944c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Homepage Design' },
+                    { url: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Projects Section' },
+                    { url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Responsive Mobile View' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="portfolio-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
+                });
+            } else if (projectId === 'network') {
+                galleryTitle.textContent = 'Network Monitoring System - Gallery';
+                
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Dashboard Monitoring' },
+                    { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Network Topology' },
+                    { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Alert System' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="network-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
+                });
+            } else if (projectId === 'inventory') {
+                galleryTitle.textContent = 'Inventory Management System - Gallery';
+                
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Main Dashboard' },
+                    { url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Product Management' },
+                    { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Sales Report' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="inventory-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
+                });
+            } else if (projectId === 'tourism') {
+                galleryTitle.textContent = 'Lombok Tourism Website - Gallery';
+                
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Homepage' },
+                    { url: 'https://images.unsplash.com/photo-1507525425514-59419bc1e6a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Destination Guide' },
+                    { url: 'https://images.unsplash.com/photo-1506929562872-bb421503ef0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Booking System' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="tourism-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
+                });
+            } else if (projectId === 'itsupport') {
+                galleryTitle.textContent = 'IT Support Dashboard - Gallery';
+                
+                const images = [
+                    { url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Dashboard Overview' },
+                    { url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'Ticket Management' },
+                    { url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', caption: 'System Health Monitor' }
+                ];
+                
+                images.forEach(img => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.innerHTML = `
+                        <a href="${img.url}" data-lightbox="itsupport-gallery" data-title="${img.caption}">
+                            <img src="${img.url}" alt="${img.caption}">
+                            <div class="gallery-caption">${img.caption}</div>
+                        </a>
+                    `;
+                    galleryGrid.appendChild(item);
+                });
+            }
+            
+            // Show modal
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeGallery() {
+            document.getElementById('galleryModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('galleryModal');
+            if (event.target == modal) {
+                closeGallery();
+            }
+        }
+        
+        // Initialize lightbox
+        lightbox.option({
+            'resizeDuration': 200,
+            'wrapAround': true,
+            'albumLabel': 'Image %1 of %2',
+            'fadeDuration': 300,
+            'imageFadeDuration': 300
         });
     </script>
 </body>
